@@ -1,0 +1,32 @@
+{
+  "name": "@xybersolve/simple-node-web-server",
+  "version": "1.0.4",
+  "description": "Simple node web server",
+  "main": "index.js",
+  "config": {
+    "dockerRepo": "xybersolve/node-web-server",
+    "dockerName": "node-web-server",
+    "dockerPort": "3000"
+  },
+  "scripts": {
+    "start": "node ./index.js",
+    "start:dev": "nodemon ./index.js",
+    "start:prod": "pm2 ./index.js"
+  },
+  "author": "Greg Milligan <xybersolve@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "compression": "^1.7.2",
+    "express": "^4.16.3",
+    "express-sslify": "^1.2.0",
+    "lodash": "^4.17.10",
+    "morgan": "^1.9.0",
+    "path": "^0.12.7",
+    "pm2": "^3.2.4"
+  },
+  "devDependencies": {
+    "cross-conf-env": "^1.1.2",
+    "nodemon": "^1.18.9"
+  }
+}
