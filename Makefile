@@ -23,6 +23,8 @@ VERSION := 1.0.4
 IMAGE := xs-node-web-server
 CONTAINER := xs-node-web-server
 BACKUP_DIR := ./archives
+PORT_EXT := 8282
+PORT_INT := 3000
 
 # Versioning Variables
 #VERSION=$(shell node -pe "require('./package.json').version")
@@ -62,7 +64,7 @@ login: ## Login to DockerHub, expect user=<username>, pass=<password>
 	# from jenkins
 	# @docker login -u $(user) -p $(pass)
 
-push: ## Push to DockerHub registry
+push: login ## Push to DockerHub registry
 	@echo 'Pushing to registry, as:'
 	@docker push $(ORG)/$(IMAGE):$(HASH_SHORT)
 	@docker push $(ORG)/$(IMAGE):latest
@@ -73,13 +75,12 @@ deploy: ## Deploy into field
 up: ## Run the newest created image
 	docker run -e NODE_ENV=local \
 		--name $(IMAGE) -d \
-		-p $(PORT) \
+		-p $(PORT_EXT):$(PORT_INT) \
 		$(ORG)/$(IMAGE):$(HASH_SHORT)
 
 down: ## Bring down the running container
-	docker container stop $(CONTAINER)
-	docker container rmi $(CONTAINER)
-
+	docker container kill $(CONTAINER) | true
+	docker container rm $(CONTAINER)
 
 clean: ## Delete the image
 	@docker image rmi $(IMAGE)
@@ -97,25 +98,26 @@ help:
 		| sort \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-12s\033[0m %s\n", $$1, $$2}'
 
-		# "start": "node index",
-    # "test": "jasmine",
-    # "predocker:build": "npm test",
-    # "docker:build": "cross-conf-env docker image build . -t $npm_package_config_imageRepo:$npm_package_version",
-    # "postdocker:build": "npm run docker:tag",
-    # "prepush-tag": "git push origin :refs/tags/$npm_package_version",
-    # "push-tag": "git tag -fa $npm_package_version",
-    # "postpush-tag": "git push origin master --tags",
-    # "docker:tag": " cross-conf-env docker image tag $npm_package_config_imageRepo:$npm_package_version $npm_package_config_imageRepo:latest",
-    # "docker:run": "run-s -c docker:clean docker:runHelper",
-    # "docker:runHelper": "cross-conf-env docker run -e NODE_ENV=local --name $npm_package_config_imageName -d -p $npm_package_config_imagePort:3000 $npm_package_config_imageRepo",
-    # "predocker:publish": "echo Attention! Ensure `docker login` is correct.",
-    # "docker:publish": "cross-conf-env docker image push $npm_package_config_imageRepo:$npm_package_version",
-    # "postdocker:publish": "cross-conf-env docker image push $npm_package_config_imageRepo:latest",
-    # "docker:clean": "cross-conf-env docker rm -f $npm_package_config_imageName",
-    # "predocker:taillogs": "echo Web Server Logs:",
-    # "docker:taillogs": "cross-conf-env docker logs -f $npm_package_config_imageName",
-    # "docker:open:win": "echo Trying to launch on Windows && timeout 2 && start http://localhost:%npm_package_config_imagePort%",
-    # "docker:open:mac": "echo Trying to launch on MacOS && sleep 2 && URL=http://localhost:$npm_package_config_imagePort && open $URL",
-    # "docker:debugmessage": "echo Docker Debug Completed Successfully! Hit Ctrl+C to terminate log tailing.",
-    # "predocker:debug": "run-s docker:build docker:run",
-    # "docker:debug": "run-s -cs docker:open:win docker:open:mac docker:debugmessage docker:taillogs"
+# duluca
+# "start": "node index",
+# "test": "jasmine",
+# "predocker:build": "npm test",
+# "docker:build": "cross-conf-env docker image build . -t $npm_package_config_imageRepo:$npm_package_version",
+# "postdocker:build": "npm run docker:tag",
+# "prepush-tag": "git push origin :refs/tags/$npm_package_version",
+# "push-tag": "git tag -fa $npm_package_version",
+# "postpush-tag": "git push origin master --tags",
+# "docker:tag": " cross-conf-env docker image tag $npm_package_config_imageRepo:$npm_package_version $npm_package_config_imageRepo:latest",
+# "docker:run": "run-s -c docker:clean docker:runHelper",
+# "docker:runHelper": "cross-conf-env docker run -e NODE_ENV=local --name $npm_package_config_imageName -d -p $npm_package_config_imagePort:3000 $npm_package_config_imageRepo",
+# "predocker:publish": "echo Attention! Ensure `docker login` is correct.",
+# "docker:publish": "cross-conf-env docker image push $npm_package_config_imageRepo:$npm_package_version",
+# "postdocker:publish": "cross-conf-env docker image push $npm_package_config_imageRepo:latest",
+# "docker:clean": "cross-conf-env docker rm -f $npm_package_config_imageName",
+# "predocker:taillogs": "echo Web Server Logs:",
+# "docker:taillogs": "cross-conf-env docker logs -f $npm_package_config_imageName",
+# "docker:open:win": "echo Trying to launch on Windows && timeout 2 && start http://localhost:%npm_package_config_imagePort%",
+# "docker:open:mac": "echo Trying to launch on MacOS && sleep 2 && URL=http://localhost:$npm_package_config_imagePort && open $URL",
+# "docker:debugmessage": "echo Docker Debug Completed Successfully! Hit Ctrl+C to terminate log tailing.",
+# "predocker:debug": "run-s docker:build docker:run",
+# "docker:debug": "run-s -cs docker:open:win docker:open:mac docker:debugmessage docker:taillogs"
